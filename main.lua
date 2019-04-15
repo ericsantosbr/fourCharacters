@@ -29,14 +29,22 @@ function love.load()
 
 	p.setMeter(64)
 
-	-- test character
+	-- test characters
 	table.insert(characters, character.newCharacter(400, 300, 20, 20, {1, 0, 0, 1}))
+	table.insert(characters, character.newCharacter(600, 300, 20, 20, {1, 0.7, 0, 1}, {up = "w", left = "a", right = "d"}))
 
+	-- test ground object
 	ground = {}
 	ground.body = p.newBody(world, g.getWidth() / 2, 550, "static")
 	ground.shape = p.newRectangleShape(800, 100)
 	ground.fixture = p.newFixture(ground.body, ground.shape)
 	ground.color = {0.4, 0.86, 0.2, 1}
+	ground.draw = function(self)
+		g.setColor(self.color)
+		g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+	end
+
+	table.insert(worldElements, ground)
 
 	-- test wall objects
 	wall1 = {}
@@ -44,8 +52,8 @@ function love.load()
 	wall1.shape = p.newRectangleShape(4, g.getHeight())
 	wall1.fixture = p.newFixture(wall1.body, wall1.shape)
 	wall1.draw = function(self)
-		-- g.setColor(0, 0, 1, 1)
-		-- g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+		g.setColor(0, 0, 1, .3)
+		g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
 	end
 
 	table.insert(worldElements, wall1)
@@ -55,8 +63,8 @@ function love.load()
 	wall2.shape = p.newRectangleShape(g.getWidth(), 4)
 	wall2.fixture = p.newFixture(wall2.body, wall2.shape)
 	wall2.draw = function(self)
-		-- g.setColor(0, 0, 1, 1)
-		-- g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+		g.setColor(0, 0, 1, .3)
+		g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
 	end
 
 	table.insert(worldElements, wall2)
@@ -67,24 +75,22 @@ function love.load()
 	wall3.shape = p.newRectangleShape(4, g.getHeight())
 	wall3.fixture = p.newFixture(wall3.body, wall3.shape)
 	wall3.draw = function(self)
-		-- g.setColor(0, 0, 1, 1)
-		-- g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+		g.setColor(0, 0, 1, .3)
+		g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
 	end
 
 	table.insert(worldElements, wall3)
 
+	for i = 1, 2 do
+		if i == 1 then
+			table.insert(scenes, scene.newScene(drawableElements, i, characters[1]))
+		
+		elseif i == 2 then
+			table.insert(scenes, scene.newScene(drawableElements, i, characters[2]))
 
-	-- test ground object
-	ground.draw = function(self)
-		g.setColor(self.color)
-		g.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
-	end
-
-	table.insert(worldElements, ground)
-
-	for i = 1, 4 do
-		local newScene = g.newCanvas()
-		table.insert(scenes, scene.newScene(drawableElements, i))
+		else
+			table.insert(scenes, scene.newScene(drawableElements, i))
+		end
 	end
 end
 
@@ -108,6 +114,7 @@ end
 function love.draw()
 	for i, v in pairs(scenes) do
 		g.setBackgroundColor(0.5, 0.7, 0.67)
+		g.setColor(1, 1, 1)
 
 		if scenes[i].number == 1 then
 			g.draw(scenes[i].sceneCanvas, 0, 0, 0, .5, .5)
@@ -126,3 +133,4 @@ function love.draw()
 		end
 	end
 end
+

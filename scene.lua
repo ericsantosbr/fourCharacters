@@ -1,14 +1,15 @@
 local camera = require("camera")
-local newCamera = camera.newCamera()
 
 local scene = {}
 
 g = love.graphics
 
-function scene.newScene(drawableElements, n)
+function scene.newScene(drawableElements, n, centerElement)
 	local newScene = {}
 
 	newScene.number = n
+	newScene.centerElement = centerElement
+	newScene.camera = camera.newCamera()
 
 	if drawableElements == nil then
 		love.event.quit()
@@ -22,9 +23,22 @@ function scene.newScene(drawableElements, n)
 	newScene.update = function(self)
 		g.setCanvas(self.sceneCanvas)
 		g.clear()
-		for k, v in pairs(self.drawableElements) do
-			for v, j in pairs(v) do
-				j:draw()
+		if self.centerElement then
+			local x, y = centerElement.body:getWorldCenter()
+			self.camera:setPosition(x - g.getWidth() / 2, y - g.getHeight() / 2)
+			self.camera:set()
+			for k, v in pairs(self.drawableElements) do
+				for v, j in pairs(v) do
+					j:draw()
+				end
+			end
+			self.camera:unset()
+
+		else
+			for k, v in pairs(self.drawableElements) do
+				for v, j in pairs(v) do
+					j:draw()
+				end
 			end
 		end
 		g.setCanvas()
